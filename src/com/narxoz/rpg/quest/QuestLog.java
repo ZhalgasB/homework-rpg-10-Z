@@ -24,6 +24,10 @@ public class QuestLog {
         return quests.size();
     }
 
+    public QuestIterator rewardSorted() {
+        return new RewardSortedQuestIterator(this);
+    }
+
     public QuestIterator ordered() {
         return new OrderedQuestIterator(this);
     }
