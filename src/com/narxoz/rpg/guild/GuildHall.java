@@ -12,14 +12,37 @@ public class GuildHall implements GuildMediator {
 
     private final Map<String, List<GuildMember>> membersByTopic = new HashMap<>();
 
+    public int getMessagesRouted() {
+        return messagesRouted;
+    }
+
+    public int getMembersNotified() {
+        return membersNotified;
+    }
+
+    private int messagesRouted = 0;
+    private int membersNotified = 0;
+
     @Override
     public void register(GuildMember member) {
-        // TODO: add the member to the topic lists it should receive.
+        addSubscriber("orders",member);
+        addSubscriber("supplies",member);
+        addSubscriber("scouting",member);
+        addSubscriber("healing", member);
+        addSubscriber("urgent",member);
+        addSubscriber("rewards", member);
     }
 
     @Override
     public void dispatch(String topic, GuildMember from, String payload) {
-        // TODO: notify registered members for the topic without direct colleague calls.
+        messagesRouted ++;
+        List<GuildMember> subscribers = subscribersFor(topic);
+        for (GuildMember member : subscribers) {
+            if (member != from) {
+                member.receive(topic,from,payload);
+                membersNotified++;
+            }
+        }
     }
 
     protected void addSubscriber(String topic, GuildMember member) {
